@@ -59,7 +59,8 @@ namespace ariel {
         };
 
         class AscendingIterator : public BaseIterator {
-
+        private:
+            std::list<NodeInt>::iterator iterator;
         public:
             explicit AscendingIterator(MagicalContainer &container);
 
@@ -76,6 +77,9 @@ namespace ariel {
             AscendingIterator begin();
 
             AscendingIterator end();
+
+            std::list<NodeInt>::iterator &getIterator();
+            const std::list<NodeInt>::iterator &getIteratorConst()const ;
         };
 
         class SideCrossIterator : public BaseIterator {
@@ -109,6 +113,8 @@ namespace ariel {
         };
 
         class PrimeIterator : public BaseIterator {
+        private:
+            std::list<NodeIntPtr>::iterator iterator;
         public:
             explicit PrimeIterator(MagicalContainer &container);
 
@@ -125,6 +131,10 @@ namespace ariel {
             PrimeIterator begin();
 
             PrimeIterator end();
+
+            std::list<NodeIntPtr>::iterator &getIterator();
+            const std::list<NodeIntPtr>::iterator &getIteratorConst()const ;
+
         };
 
     private:

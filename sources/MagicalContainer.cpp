@@ -13,21 +13,28 @@ void MagicalContainer::addElement(int element) {
     NodeInt newNode(index, element);
 
     if (it == elementsAsc.begin()) {
-        elementsAsc.insert(it, newNode);
+        auto insertedIt = elementsAsc.insert(it, newNode);
+        if (isPrime(element)) {
+            std::cout <<element<< " prime\n";
+            NodeIntPtr nodeIntPtr(insertedIt->getIndex(), &*insertedIt);
+            primeHelper.push_back(nodeIntPtr);
+        }
     } else {
         auto prev_it = std::prev(it);
-        elementsAsc.insert(std::next(prev_it), newNode);
+        auto insertedIt=elementsAsc.insert(std::next(prev_it), newNode);
+        if (isPrime(element)) {
+            std::cout <<element<< " prime\n";
+            NodeIntPtr nodeIntPtr(insertedIt->getIndex(), &*insertedIt);
+            primeHelper.push_back(nodeIntPtr);
+        }
     }
 
-    // Update the index values of the nodes after insertion
-    for (auto nodeIt = std::next(it); nodeIt != elementsAsc.end(); ++nodeIt) {
-        nodeIt->setIndex(nodeIt->getIndex() + 1);
-    }
 
-    if (isPrime(element)) {
-        primeHelper.emplace_back(index, &element);
+    std::cout << " prime\n";
+    for (const auto &node: primeHelper) {
+        std::cout << node.getData() << " ";
     }
-
+    std::cout << " \nend\n";
     ++currentSize;
 }
 
@@ -128,14 +135,17 @@ MagicalContainer *MagicalContainer::BaseIterator::getMagicalContainerPtr() const
 
 // AscendingIterator
 MagicalContainer::AscendingIterator::AscendingIterator(MagicalContainer &container) : BaseIterator(&container, asc,
-                                                                                                   &container.elementsAsc.front()) {
+                                                                                                   &container.elementsAsc.front()),
+                                                                                      iterator(
+                                                                                              container.elementsAsc.begin()) {
 }
 
 MagicalContainer::AscendingIterator::AscendingIterator() : BaseIterator(nullptr, asc, nullptr) {}
 
 
 MagicalContainer::AscendingIterator::AscendingIterator(const AscendingIterator &other) : BaseIterator(
-        other.getMagicalContainerPtr(), asc, other.getCurrent()) {}
+        other.getMagicalContainerPtr(), asc, other.getCurrent()), iterator(
+        other.getIteratorConst()) {}
 
 MagicalContainer::AscendingIterator::~AscendingIterator() = default;
 
@@ -152,23 +162,24 @@ MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operat
     if (this->getCurrent() == nullptr) {
         throw std::runtime_error("Cannot increment beyond the end of the container");
     }
-    auto &container = *(this->getMagicalContainerPtr());
-    auto it = std::find_if(container.elementsAsc.begin(), container.elementsAsc.end(),
-                           [currentNode = this->getCurrent()](const NodeBase &node) {
-                               return &node == currentNode;
-                           });
 
-    if (it != container.elementsAsc.end()) {
-        ++it;
-        if (it != container.elementsAsc.end()) {
-            this->setCurrent(&(*it));
+    auto *container = this->getMagicalContainerPtr();
+    auto &currentIterator = this->getIterator();
+
+    if (currentIterator != container->elementsAsc.end()) {
+        auto nextIterator = std::next(currentIterator);
+        if (nextIterator != container->elementsAsc.end()) {
+            ++currentIterator;
+            this->setCurrent(&(*currentIterator));
         } else {
+            ++currentIterator;
             this->setCurrent(nullptr);
         }
     }
 
     return *this;
 }
+
 
 MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::begin() {
     if (this->getMagicalContainerPtr() == nullptr) throw std::runtime_error("No container found");
@@ -184,6 +195,14 @@ MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::end() {
     AscendingIterator endIterator(*this);
     endIterator.setCurrent(nullptr);
     return endIterator;
+}
+
+std::list<NodeInt>::iterator &MagicalContainer::AscendingIterator::getIterator() {
+    return iterator;
+}
+
+const std::list<NodeInt>::iterator &MagicalContainer::AscendingIterator::getIteratorConst() const {
+    return iterator;
 }
 
 
@@ -216,36 +235,36 @@ MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operat
 
 
 MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++() {
-    auto currentNode = getCurrent();
-    if (currentNode == nullptr) {
-        throw std::runtime_error("Cannot increment beyond the end of the container");
-    }
-    auto ascList = getMagicalContainerPtr()->elementsAsc;
-    if (isFront()) {
-        if (currentNode != tail) {
-            auto it = std::next(ascList.begin(), static_cast<int>(currentNode->getIndex() + 1));
-            if (it != ascList.end()) {
-                currentNode = &(*it);
-            } else {
-                throw std::runtime_error("Cannot increment beyond the end of the container");
-            }
-        } else {
-            setFront(false);
-            this->setCurrent(std::prev(ascList.end()));
-        }
-    } else {
-        if (currentNode != ascList.begin()) {
-            auto it = std::prev(ascList.begin(), static_cast<int>(currentNode->getIndex() - 1));
-            if (it != ascList.end()) {
-                currentNode = &(*it);
-            } else {
-                throw std::runtime_error("Cannot increment beyond the end of the container");
-            }
-        } else {
-            setFront(true);
-            currentNode = std::next(ascList.begin());
-        }
-    }
+//    auto currentNode = getCurrent();
+//    if (currentNode == nullptr) {
+//        throw std::runtime_error("Cannot increment beyond the end of the container");
+//    }
+//    auto ascList = getMagicalContainerPtr()->elementsAsc;
+//    if (isFront()) {
+//        if (currentNode != tail) {
+//            auto it = std::next(ascList.begin(), static_cast<int>(currentNode->getIndex() + 1));
+//            if (it != ascList.end()) {
+//                currentNode = &(*it);
+//            } else {
+//                throw std::runtime_error("Cannot increment beyond the end of the container");
+//            }
+//        } else {
+//            setFront(false);
+//            this->setCurrent(std::prev(ascList.end()));
+//        }
+//    } else {
+//        if (currentNode != ascList.begin()) {
+//            auto it = std::prev(ascList.begin(), static_cast<int>(currentNode->getIndex() - 1));
+//            if (it != ascList.end()) {
+//                currentNode = &(*it);
+//            } else {
+//                throw std::runtime_error("Cannot increment beyond the end of the container");
+//            }
+//        } else {
+//            setFront(true);
+//            currentNode = std::next(ascList.begin());
+//        }
+//    }
 
     return *this;
 }
@@ -281,11 +300,13 @@ void MagicalContainer::SideCrossIterator::setFront(bool newFront) {
 
 // PrimeIterator
 MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container) : BaseIterator(&container, prime,
-                                                                                           &container.primeHelper.front()) {}
+                                                                                           &container.primeHelper.front()),
+                                                                              iterator(container.primeHelper.begin()) {}
 
 MagicalContainer::PrimeIterator::PrimeIterator() : BaseIterator(nullptr, prime, nullptr) {}
 
-MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other) = default;
+MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other) : BaseIterator(
+        other.getMagicalContainerPtr(), prime, other.getCurrent()), iterator(other.getIteratorConst()) {}
 
 MagicalContainer::PrimeIterator::~PrimeIterator() = default;
 
@@ -298,18 +319,49 @@ MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(cons
 }
 
 MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++() {
+    if (this->getCurrent() == nullptr) {
+        throw std::runtime_error("Cannot increment beyond the end of the container");
+    }
+
+    auto *container = this->getMagicalContainerPtr();
+    auto &currentIterator = this->getIterator();
+
+    if (currentIterator != container->primeHelper.end()) {
+        auto nextIterator = std::next(currentIterator);
+        if (nextIterator != container->primeHelper.end()) {
+            ++currentIterator;
+            this->setCurrent(&(*currentIterator));
+        } else {
+            ++currentIterator;
+            this->setCurrent(nullptr);
+        }
+    }
 
     return *this;
 }
 
 MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::begin() {
-
-    return *this;
+    if (this->getMagicalContainerPtr() == nullptr) throw std::runtime_error("No container found");
+    PrimeIterator beginIterator(*this);
+    if (beginIterator.getMagicalContainerPtr() == nullptr) {
+    }
+    beginIterator.setCurrent(&(*getMagicalContainerPtr()->elementsAsc.begin()));
+    return beginIterator;
 }
 
 MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::end() {
+    if (this->getMagicalContainerPtr() == nullptr) throw std::runtime_error("2No container found");
+    PrimeIterator endIterator(*this);
+    endIterator.setCurrent(nullptr);
+    return endIterator;
+}
 
-    return *this;
+std::list<NodeIntPtr>::iterator &MagicalContainer::PrimeIterator::getIterator() {
+    return iterator;
+}
+
+const std::list<NodeIntPtr>::iterator &MagicalContainer::PrimeIterator::getIteratorConst() const {
+    return iterator;
 }
 
 

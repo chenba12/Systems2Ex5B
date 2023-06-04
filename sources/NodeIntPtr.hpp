@@ -2,13 +2,14 @@
 #define NODEINTPTR_HPP
 
 #include "NodeBase.hpp"
+#include "NodeInt.hpp"
 
 class NodeIntPtr : public NodeBase {
     std::size_t index;
-    int *data;
+    NodeInt *data;
 
 public:
-    NodeIntPtr(std::size_t index, int *data);
+    NodeIntPtr(std::size_t index, NodeInt *data);
 
     size_t getIndex() const override;
 
