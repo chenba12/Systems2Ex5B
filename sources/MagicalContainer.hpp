@@ -4,63 +4,41 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
-#include "NodeInt.hpp"
-#include "NodeIntPtr.hpp"
-#include "list"
+#include <sstream>
+#include "LinkedList.hpp"
 
 
 namespace ariel {
-    enum iteratorType {
-        asc = 0, cross = 1, prime = 2
-    };
 
     class MagicalContainer {
     private:
-        size_t currentSize;
-        std::list<NodeInt> elementsAsc;
-        std::list<NodeIntPtr> primeHelper;
+        std::size_t currentSize;
+        LinkedList<int> elementsAsc;
+        LinkedList<const int *> elementsPrime;
 
+        static bool isPrime(int n);
 
     public:
+        MagicalContainer();
+
         void addElement(int element);
 
         void removeElement(int element);
 
         size_t size() const;
 
-        class BaseIterator {
-            MagicalContainer *magicalContainerPtr;
-            enum iteratorType type;
-            NodeBase *current;
-        public:
-            BaseIterator(MagicalContainer *magicalContainerPtr, iteratorType type, NodeBase *current);
+        const LinkedList<int> &getElementsAsc() const;
 
-            bool operator>(const BaseIterator &other) const;
+        class AscendiongIterator;
 
-            bool operator<(const BaseIterator &other) const;
+        class SideCrossIterator;
 
-            bool operator==(const BaseIterator &other) const;
+        class PrimeIterator;
 
-            bool operator!=(const BaseIterator &other) const;
-
-            int operator*();
-
-            iteratorType getType() const;
-
-            MagicalContainer *getMagicalContainerPtr() const;
-
-            NodeBase *getCurrent() const {
-                return current;
-            }
-
-            void setCurrent(NodeBase *newCurrent) {
-                BaseIterator::current = newCurrent;
-            }
-        };
-
-        class AscendingIterator : public BaseIterator {
+        class AscendingIterator {
         private:
-            std::list<NodeInt>::iterator iterator;
+            MagicalContainer *container;
+            std::shared_ptr<Node<int>> current;
         public:
             explicit AscendingIterator(MagicalContainer &container);
 
@@ -68,24 +46,54 @@ namespace ariel {
 
             AscendingIterator();
 
+            AscendingIterator(AscendingIterator &&other) noexcept;
+            AscendingIterator &operator=(AscendingIterator &&other) noexcept;
+
             ~AscendingIterator();
 
             AscendingIterator &operator=(const AscendingIterator &other);
 
             AscendingIterator &operator++();
 
+            int &operator*() const;
+
             AscendingIterator begin();
 
             AscendingIterator end();
 
-            std::list<NodeInt>::iterator &getIterator();
-            const std::list<NodeInt>::iterator &getIteratorConst()const ;
+            bool operator==(const AscendingIterator &other) const;
+
+            bool operator!=(const AscendingIterator &other) const;
+
+            bool operator<(const AscendingIterator &other) const;
+
+            bool operator>(const AscendingIterator &other) const;
+
+            bool operator==(const SideCrossIterator &other) const;
+
+            bool operator!=(const SideCrossIterator &other) const;
+
+            bool operator<(const SideCrossIterator &other) const;
+
+            bool operator>(const SideCrossIterator &other) const;
+
+            bool operator==(const PrimeIterator &other) const;
+
+            bool operator!=(const PrimeIterator &other) const;
+
+            bool operator<(const PrimeIterator &other) const;
+
+            bool operator>(const PrimeIterator &other) const;
+
         };
 
-        class SideCrossIterator : public BaseIterator {
+        class SideCrossIterator {
         private:
-            bool front;
-            NodeInt *tail;
+            std::size_t count;
+            MagicalContainer *container;
+            bool flip;
+            std::shared_ptr<Node<int>> front;
+            std::shared_ptr<Node<int>> back;
         public:
             explicit SideCrossIterator(MagicalContainer &container);
 
@@ -95,26 +103,50 @@ namespace ariel {
 
             ~SideCrossIterator();
 
+            SideCrossIterator(SideCrossIterator &&other) noexcept;
+            SideCrossIterator &operator=(SideCrossIterator &&other) noexcept;
+
             SideCrossIterator &operator=(const SideCrossIterator &other);
 
             SideCrossIterator &operator++();
+
+            int &operator*() const;
 
             SideCrossIterator begin();
 
             SideCrossIterator end();
 
-            bool isFront() const;
 
-            void setFront(bool front);
+            bool operator==(const AscendingIterator &other) const;
 
-            NodeInt *getTail() const;
+            bool operator!=(const AscendingIterator &other) const;
 
-            void setTail(NodeInt *tail);
+            bool operator<(const AscendingIterator &other) const;
+
+            bool operator>(const AscendingIterator &other) const;
+
+            bool operator==(const SideCrossIterator &other) const;
+
+            bool operator!=(const SideCrossIterator &other) const;
+
+            bool operator<(const SideCrossIterator &other) const;
+
+            bool operator>(const SideCrossIterator &other) const;
+
+            bool operator==(const PrimeIterator &other) const;
+
+            bool operator!=(const PrimeIterator &other) const;
+
+            bool operator<(const PrimeIterator &other) const;
+
+            bool operator>(const PrimeIterator &other) const;
+
         };
 
-        class PrimeIterator : public BaseIterator {
+        class PrimeIterator {
         private:
-            std::list<NodeIntPtr>::iterator iterator;
+            MagicalContainer *container;
+            std::shared_ptr<Node<const int *>> current;
         public:
             explicit PrimeIterator(MagicalContainer &container);
 
@@ -122,24 +154,46 @@ namespace ariel {
 
             PrimeIterator(const PrimeIterator &other);
 
+            PrimeIterator(PrimeIterator &&other) noexcept;
+            PrimeIterator &operator=(PrimeIterator &&other) noexcept;
+
             ~PrimeIterator();
 
             PrimeIterator &operator=(const PrimeIterator &other);
 
             PrimeIterator &operator++();
 
+            const int &operator*() const;
+
             PrimeIterator begin();
 
             PrimeIterator end();
 
-            std::list<NodeIntPtr>::iterator &getIterator();
-            const std::list<NodeIntPtr>::iterator &getIteratorConst()const ;
+            bool operator==(const AscendingIterator &other) const;
+
+            bool operator!=(const AscendingIterator &other) const;
+
+            bool operator<(const AscendingIterator &other) const;
+
+            bool operator>(const AscendingIterator &other) const;
+
+            bool operator==(const SideCrossIterator &other) const;
+
+            bool operator!=(const SideCrossIterator &other) const;
+
+            bool operator<(const SideCrossIterator &other) const;
+
+            bool operator>(const SideCrossIterator &other) const;
+
+            bool operator==(const PrimeIterator &other) const;
+
+            bool operator!=(const PrimeIterator &other) const;
+
+            bool operator<(const PrimeIterator &other) const;
+
+            bool operator>(const PrimeIterator &other) const;
 
         };
-
-    private:
-
-        static bool isPrime(int n);
 
 
     };
