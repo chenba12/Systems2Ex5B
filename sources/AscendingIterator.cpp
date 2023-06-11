@@ -74,7 +74,11 @@ MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::begin()
  */
 MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::end() {
     AscendingIterator it(*container);
-    it.current = container->elementsAsc.getAnEnd();
+    if (container->size() == 0) {
+        it.current = nullptr;
+    } else {
+        it.current = container->elementsAsc.getAnEnd();
+    }
     return it;
 }
 
@@ -115,8 +119,11 @@ MagicalContainer::AscendingIterator::operator>(const MagicalContainer::Ascending
  * @return true if this iterator == the other iterator index
  */
 bool MagicalContainer::AscendingIterator::operator==(const MagicalContainer::AscendingIterator &other) const {
-    return container == other.container &&
-           current->index == other.current->index;
+    if (container != other.container) throw std::runtime_error("Not the same container");
+    if (container->size() == 0 && other.container->size() == 0) {
+        return true;
+    }
+    return current->index == other.current->index;
 }
 
 /**

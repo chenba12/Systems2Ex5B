@@ -30,10 +30,12 @@ MagicalContainer::PrimeIterator::operator=(const MagicalContainer::PrimeIterator
     this->current = other.current;
     return *this;
 }
+
 /**
  * default ctr
  */
 MagicalContainer::PrimeIterator::PrimeIterator() = default;
+
 /**
  * default destructor
  */
@@ -69,12 +71,17 @@ MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::begin() {
     head.container->elementsPrime.getHead();
     return head;
 }
+
 /**
  * @return a new iterator pointing to the end of the container
  */
 MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::end() {
     PrimeIterator it(*container);
-    it.current = container->elementsPrime.getAnEnd();
+    if (container->size() == 0) {
+        it.current = nullptr;
+    } else {
+        it.current = container->elementsPrime.getAnEnd();
+    }
     return it;
 }
 
@@ -105,9 +112,13 @@ MagicalContainer::PrimeIterator::operator>(const MagicalContainer::PrimeIterator
  * @return true if this is equal to other, false otherwise
  */
 bool MagicalContainer::PrimeIterator::operator==(const MagicalContainer::PrimeIterator &other) const {
-    return container == other.container &&
-           current->index == other.current->index;
+    if (container != other.container) throw std::runtime_error("Not the same container");
+    if (container->size() == 0 && other.container->size() == 0) {
+        return true;
+    }
+    return current->index == other.current->index;
 }
+
 /**
  * Not equal operator
  * @param other PrimeIterator to compare with
@@ -132,7 +143,6 @@ MagicalContainer::PrimeIterator &
 MagicalContainer::PrimeIterator::operator=(MagicalContainer::PrimeIterator &&other) noexcept = default;
 
 
-
 /**
  * Comparison operator with SideCrossIterator
  * @param other SideCrossIterator to compare with
@@ -150,6 +160,7 @@ bool MagicalContainer::PrimeIterator::operator<(const MagicalContainer::SideCros
 bool MagicalContainer::PrimeIterator::operator>(const MagicalContainer::SideCrossIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with AscendingIterator
  * @param other AscendingIterator to compare with
@@ -158,6 +169,7 @@ bool MagicalContainer::PrimeIterator::operator>(const MagicalContainer::SideCros
 bool MagicalContainer::PrimeIterator::operator<(const MagicalContainer::AscendingIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with AscendingIterator
  * @param other AscendingIterator to compare with
@@ -166,6 +178,7 @@ bool MagicalContainer::PrimeIterator::operator<(const MagicalContainer::Ascendin
 bool MagicalContainer::PrimeIterator::operator>(const MagicalContainer::AscendingIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with SideCrossIterator
  * @param other SideCrossIterator to compare with
@@ -174,6 +187,7 @@ bool MagicalContainer::PrimeIterator::operator>(const MagicalContainer::Ascendin
 bool MagicalContainer::PrimeIterator::operator==(const MagicalContainer::SideCrossIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with SideCrossIterator
  * @param other SideCrossIterator to compare with
@@ -182,6 +196,7 @@ bool MagicalContainer::PrimeIterator::operator==(const MagicalContainer::SideCro
 bool MagicalContainer::PrimeIterator::operator!=(const MagicalContainer::SideCrossIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with AscendingIterator
  * @param other AscendingIterator to compare with
@@ -190,6 +205,7 @@ bool MagicalContainer::PrimeIterator::operator!=(const MagicalContainer::SideCro
 bool MagicalContainer::PrimeIterator::operator==(const MagicalContainer::AscendingIterator &other) const {
     throw std::runtime_error("Not the same type of Iterator");
 }
+
 /**
  * Comparison operator with AscendingIterator
  * @param other AscendingIterator to compare with

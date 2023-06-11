@@ -4,17 +4,17 @@
 using namespace ariel;
 
 TEST_CASE("Test initial state of MagicalContainer") {
-//    MagicalContainer container;
-//    CHECK_EQ(container.size(), 0);
-//    MagicalContainer::AscendingIterator ascIt(container);
-//    MagicalContainer::PrimeIterator primeIt(container);
-//    MagicalContainer::SideCrossIterator sideIt(container);
-//    CHECK(ascIt.begin() == ascIt.end());
-//    CHECK_FALSE(ascIt.begin() != ascIt.end());
-//    CHECK(primeIt.begin() == primeIt.end());
-//    CHECK_FALSE(primeIt.begin() != primeIt.end());
-//    CHECK(sideIt.begin() == sideIt.end());
-//    CHECK_FALSE(sideIt.begin() != sideIt.end());
+    MagicalContainer container;
+    CHECK_EQ(container.size(), 0);
+    MagicalContainer::AscendingIterator ascIt(container);
+    MagicalContainer::PrimeIterator primeIt(container);
+    MagicalContainer::SideCrossIterator sideIt(container);
+    CHECK(ascIt== ascIt.end());
+    CHECK_FALSE(ascIt != ascIt.end());
+    CHECK(primeIt == primeIt.end());
+    CHECK_FALSE(primeIt!= primeIt.end());
+    CHECK(sideIt == sideIt.end());
+    CHECK_FALSE(sideIt != sideIt.end());
 }
 
 TEST_CASE("Test adding a single element to MagicalContainer") {
