@@ -542,7 +542,6 @@ TEST_CASE("PrimeIterator with No Prime Numbers") {
 
     SUBCASE("Iterating over elements") {
         MagicalContainer::PrimeIterator it(container);
-
         CHECK(it == it.end());
         CHECK_THROWS_AS(++it, runtime_error);
     }

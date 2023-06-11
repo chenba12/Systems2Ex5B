@@ -1,5 +1,10 @@
 #include "LinkedList.hpp"
 
+/**
+ * This specialization allows for proper comparison of the values pointed to by the const int pointers, not the pointers themselves
+ * @param data Pointer to be inserted
+ * @return Pointer to the inserted element
+ */
 template<>
 const int **LinkedList<const int *>::insertSortedAscending(const int *data) {
     auto newNode = std::make_shared<Node<const int *>>(data, 0);
@@ -38,6 +43,10 @@ const int **LinkedList<const int *>::insertSortedAscending(const int *data) {
     return &(newNode->data);
 }
 
+/**
+ * This specialization allows for proper comparison of the values pointed to by the const int pointers, not the pointers themselves
+ * @param data Pointer to the element to be deleted
+ */
 template<>
 void LinkedList<const int *>::deleteElement(const int *data) {
     if (head == end)

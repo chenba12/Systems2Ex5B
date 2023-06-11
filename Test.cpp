@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "sources/test/MagicalContainer.hpp"
+#include "sources/MagicalContainer.hpp"
 
 using namespace ariel;
 

@@ -16,7 +16,7 @@ namespace ariel {
         LinkedList<int> elementsAsc;
         LinkedList<const int *> elementsPrime;
 
-        static bool isPrime(int n);
+        static bool isPrime(int element);
 
     public:
         MagicalContainer();
@@ -28,6 +28,8 @@ namespace ariel {
         size_t size() const;
 
         const LinkedList<int> &getElementsAsc() const;
+
+        const LinkedList<const int *> &getElementsPrime() const;
 
         class AscendiongIterator;
 

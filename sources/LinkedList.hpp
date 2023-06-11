@@ -5,6 +5,11 @@
 #include <iostream>
 #include "limits"
 
+/**
+ * @class Node
+ * Class representing a node in the LinkedList
+ * @tparam T Type of data that will be stored in the Node
+ */
 template<typename T>
 class Node {
 public:
@@ -14,8 +19,16 @@ public:
     std::weak_ptr<Node<T>> prev;
     bool isEnd;
 
+    /**
+     * Default constructor
+     */
     Node() : data(T()), index(0), next(nullptr), prev(), isEnd(false) {}
-
+    /**
+     * Constructor to initialize a node with data, index, and isEnd flag
+     * @param data Data to be stored in the node
+     * @param index Index of the node in the list
+     * @param isEnd Whether the node is the end of the list
+     */
     Node(T data, int index, bool isEnd = false) : data(data), index(index), next(nullptr), prev(), isEnd(isEnd) {}
 
     bool operator<(const Node &node) const { return this->index < node.index; }
@@ -27,6 +40,11 @@ public:
     bool operator!=(const Node &node) const { return this->index != node.index; }
 };
 
+/**
+ * @class LinkedList
+ * Class representing a LinkedList data structure
+ * @tparam T Type of data that will be stored in the LinkedList
+ */
 template<typename T>
 class LinkedList {
 private:
@@ -34,25 +52,49 @@ private:
     std::shared_ptr<Node<T>> end;
 
 public:
+    /**
+    * Default constructor
+    * Initializes the LinkedList with a head and end nodes
+    */
     LinkedList() : end(std::make_shared<Node<T>>(T(), std::numeric_limits<int>::max(), true)) {
         head = end;
     }
 
+    /**
+    * Inserts an element in ascending order
+    * @param data Element to be inserted
+    * @return Pointer to the inserted element
+    */
     T *insertSortedAscending(T data);
 
+    /**
+    * Deletes an element from the LinkedList
+    * @param data Element to be deleted
+    */
     void deleteElement(T data);
 
+    /**
+    * @return Number of elements in the LinkedList
+    */
     int size() const;
 
+    /**
+    * @return Pointer to the head node
+    */
     const std::shared_ptr<Node<T>> &getHead() const;
 
-    void setHead(const std::shared_ptr<Node<T>> &newHead);
-
+    /**
+    * @param anEnd Pointer to the new end node
+    */
     const std::shared_ptr<Node<T>> &getAnEnd() const;
 
-    void setAnEnd(const std::shared_ptr<Node<T>> &anEnd);
 };
 
+/**
+* Inserts an element in ascending order
+* @param data Element to be inserted
+* @return Pointer to the inserted element
+*/
 template<typename T>
 T *LinkedList<T>::insertSortedAscending(T data) {
     auto newNode = std::make_shared<Node<T>>(data, 0);
@@ -91,6 +133,10 @@ T *LinkedList<T>::insertSortedAscending(T data) {
     return &(newNode->data);
 }
 
+/**
+* Deletes an element from the LinkedList
+* @param data Element to be deleted
+*/
 template<typename T>
 void LinkedList<T>::deleteElement(T data) {
     if (head == end) {
@@ -129,7 +175,9 @@ void LinkedList<T>::deleteElement(T data) {
         }
     }
 }
-
+/**
+* @return Number of elements in the LinkedList
+*/
 template<typename T>
 int LinkedList<T>::size() const {
     int count = 0;
@@ -148,19 +196,10 @@ const std::shared_ptr<Node<T>> &LinkedList<T>::getHead() const {
     return head;
 }
 
-template<typename T>
-void LinkedList<T>::setHead(const std::shared_ptr<Node<T>> &newHead) {
-    head = newHead;
-}
 
 template<typename T>
 const std::shared_ptr<Node<T>> &LinkedList<T>::getAnEnd() const {
     return end;
-}
-
-template<typename T>
-void LinkedList<T>::setAnEnd(const std::shared_ptr<Node<T>> &anEnd) {
-    end = anEnd;
 }
 
 template<typename T>
