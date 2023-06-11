@@ -7,7 +7,12 @@ using namespace ariel;
  * @param container magical container
  */
 MagicalContainer::AscendingIterator::AscendingIterator(MagicalContainer &container)
-        : container(&container), current(container.elementsAsc.getHead()) {
+        : container(&container), current() {
+    if (container.elementsAsc.size() == 0) {
+        current = nullptr;
+    } else {
+        current = container.elementsAsc.getHead();
+    }
 }
 
 /**
@@ -93,6 +98,7 @@ MagicalContainer::AscendingIterator::operator<(const MagicalContainer::Ascending
     if (container != other.container) throw std::runtime_error("Not the same container");
     return current->index < other.current->index;
 }
+
 /**
  * compare 2 iterators by index
  * @param other AscendingIterator

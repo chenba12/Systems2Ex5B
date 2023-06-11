@@ -21,6 +21,8 @@ demo: Demo.o $(OBJECTS)
 test: TestRunner.o StudentTest1.o  $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
+test1: TestRunner.o Test.o  $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
 tidy:
 	$(TIDY) $(HEADERS) $(TIDY_FLAGS) --
