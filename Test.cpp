@@ -9,12 +9,14 @@ TEST_CASE("Test initial state of MagicalContainer") {
     MagicalContainer::AscendingIterator ascIt(container);
     MagicalContainer::PrimeIterator primeIt(container);
     MagicalContainer::SideCrossIterator sideIt(container);
-    CHECK(ascIt == ascIt.end());
-    CHECK_FALSE(ascIt != ascIt.end());
-    CHECK(primeIt == primeIt.end());
-    CHECK_FALSE(primeIt != primeIt.end());
-    CHECK(sideIt == sideIt.end());
-    CHECK_FALSE(sideIt != sideIt.end());
+    CHECK((ascIt == ascIt.end()));
+    CHECK_FALSE((ascIt != ascIt.end()));
+    CHECK((primeIt == primeIt.end()));
+    CHECK_FALSE((primeIt != primeIt.end()));
+    CHECK((sideIt == sideIt.end()));
+    CHECK_FALSE((sideIt != sideIt.end()));
+    container.addElement(5);
+    CHECK_EQ(container.size(), 1);
 }
 
 TEST_CASE("Test adding a single element to MagicalContainer") {
@@ -128,7 +130,7 @@ TEST_CASE("Test SideCrossIterator with multiple primeContainer") {
     CHECK_FALSE((iterator != iterator.end()));
 }
 
-TEST_CASE("Test PrimeIterator with multiple primeContainer") {
+TEST_CASE("Test PrimeIterator primeContainer") {
     MagicalContainer container;
     container.addElement(10);
     container.addElement(5);
@@ -380,6 +382,23 @@ TEST_CASE("Test incrementing iterators past the end") {
     CHECK_THROWS(++itPrime);
 }
 
+TEST_CASE("check delete and then inc") {
+    MagicalContainer container;
+    container.addElement(2);
+    container.addElement(3);
+    container.addElement(5);
+    MagicalContainer::PrimeIterator itPrime(container);
+    MagicalContainer::AscendingIterator itAsc(container);
+    MagicalContainer::SideCrossIterator itCross(container);
+    container.removeElement(3);
+    ++itAsc;
+    ++itPrime;
+    ++itCross;
+    CHECK_EQ(*itPrime, 5);
+    CHECK_EQ(*itAsc, 5);
+    CHECK_EQ(*itCross, 5);
+}
+
 TEST_CASE("Different Container") {
     MagicalContainer container1;
     MagicalContainer container2;
@@ -406,7 +425,7 @@ TEST_CASE("Different Container") {
     CHECK_THROWS((void) (sideIt != sideIt2));
 }
 
-TEST_CASE("Different Container") {
+TEST_CASE("Different Iterator") {
     MagicalContainer container1;
     MagicalContainer container2;
     MagicalContainer::AscendingIterator ascIt(container1);
@@ -446,19 +465,3 @@ TEST_CASE("Different Container") {
 }
 
 
-TEST_CASE("check delete and then inc") {
-    MagicalContainer container;
-    container.addElement(2);
-    container.addElement(3);
-    container.addElement(5);
-    MagicalContainer::PrimeIterator itPrime(container);
-    MagicalContainer::AscendingIterator itAsc(container);
-    MagicalContainer::SideCrossIterator itCross(container);
-    container.removeElement(3);
-    ++itAsc;
-    ++itPrime;
-    ++itCross;
-    CHECK_EQ(*itPrime, 5);
-    CHECK_EQ(*itAsc, 5);
-    CHECK_EQ(*itCross, 5);
-}
