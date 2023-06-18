@@ -9,10 +9,10 @@ TEST_CASE("Test initial state of MagicalContainer") {
     MagicalContainer::AscendingIterator ascIt(container);
     MagicalContainer::PrimeIterator primeIt(container);
     MagicalContainer::SideCrossIterator sideIt(container);
-    CHECK(ascIt== ascIt.end());
+    CHECK(ascIt == ascIt.end());
     CHECK_FALSE(ascIt != ascIt.end());
     CHECK(primeIt == primeIt.end());
-    CHECK_FALSE(primeIt!= primeIt.end());
+    CHECK_FALSE(primeIt != primeIt.end());
     CHECK(sideIt == sideIt.end());
     CHECK_FALSE(sideIt != sideIt.end());
 }
@@ -366,16 +366,99 @@ TEST_CASE("Test incrementing iterators past the end") {
     itSide.begin();
     itAsc.begin();
     itPrime.begin();
-    while (itSide!=itSide.end()){
+    while (itSide != itSide.end()) {
         ++itSide;
     }
-    while (itAsc!=itAsc.end()){
+    while (itAsc != itAsc.end()) {
         ++itAsc;
     }
-    while (itPrime!=itPrime.end()){
+    while (itPrime != itPrime.end()) {
         ++itPrime;
     }
     CHECK_THROWS(++itSide);
     CHECK_THROWS(++itAsc);
     CHECK_THROWS(++itPrime);
+}
+
+TEST_CASE("Different Container") {
+    MagicalContainer container1;
+    MagicalContainer container2;
+    MagicalContainer::AscendingIterator ascIt(container1);
+    MagicalContainer::PrimeIterator primeIt(container1);
+    MagicalContainer::SideCrossIterator sideIt(container1);
+    MagicalContainer::AscendingIterator ascIt2(container2);
+    MagicalContainer::PrimeIterator primeIt2(container2);
+    MagicalContainer::SideCrossIterator sideIt2(container2);
+
+    CHECK_THROWS((void) (ascIt > ascIt2));
+    CHECK_THROWS((void) (ascIt == ascIt2));
+    CHECK_THROWS((void) (ascIt < ascIt2));
+    CHECK_THROWS((void) (ascIt != ascIt2));
+
+    CHECK_THROWS((void) (primeIt > primeIt2));
+    CHECK_THROWS((void) (primeIt == primeIt2));
+    CHECK_THROWS((void) (primeIt < primeIt2));
+    CHECK_THROWS((void) (primeIt != primeIt2));
+
+    CHECK_THROWS((void) (sideIt > sideIt2));
+    CHECK_THROWS((void) (sideIt == sideIt2));
+    CHECK_THROWS((void) (sideIt < sideIt2));
+    CHECK_THROWS((void) (sideIt != sideIt2));
+}
+
+TEST_CASE("Different Container") {
+    MagicalContainer container1;
+    MagicalContainer container2;
+    MagicalContainer::AscendingIterator ascIt(container1);
+    MagicalContainer::PrimeIterator primeIt(container1);
+    MagicalContainer::SideCrossIterator sideIt(container1);
+
+    CHECK_THROWS((void) (ascIt > primeIt));
+    CHECK_THROWS((void) (ascIt == primeIt));
+    CHECK_THROWS((void) (ascIt < primeIt));
+    CHECK_THROWS((void) (ascIt != primeIt));
+
+    CHECK_THROWS((void) (ascIt > sideIt));
+    CHECK_THROWS((void) (ascIt == sideIt));
+    CHECK_THROWS((void) (ascIt < sideIt));
+    CHECK_THROWS((void) (ascIt != sideIt));
+
+    CHECK_THROWS((void) (primeIt > ascIt));
+    CHECK_THROWS((void) (primeIt == ascIt));
+    CHECK_THROWS((void) (primeIt < ascIt));
+    CHECK_THROWS((void) (primeIt != ascIt));
+
+    CHECK_THROWS((void) (primeIt > sideIt));
+    CHECK_THROWS((void) (primeIt == sideIt));
+    CHECK_THROWS((void) (primeIt < sideIt));
+    CHECK_THROWS((void) (primeIt != sideIt));
+
+
+    CHECK_THROWS((void) (sideIt > ascIt));
+    CHECK_THROWS((void) (sideIt == ascIt));
+    CHECK_THROWS((void) (sideIt < ascIt));
+    CHECK_THROWS((void) (sideIt != ascIt));
+
+    CHECK_THROWS((void) (sideIt > primeIt));
+    CHECK_THROWS((void) (sideIt == primeIt));
+    CHECK_THROWS((void) (sideIt < primeIt));
+    CHECK_THROWS((void) (sideIt != primeIt));
+}
+
+
+TEST_CASE("check delete and then inc") {
+    MagicalContainer container;
+    container.addElement(2);
+    container.addElement(3);
+    container.addElement(5);
+    MagicalContainer::PrimeIterator itPrime(container);
+    MagicalContainer::AscendingIterator itAsc(container);
+    MagicalContainer::SideCrossIterator itCross(container);
+    container.removeElement(3);
+    ++itAsc;
+    ++itPrime;
+    ++itCross;
+    CHECK_EQ(*itPrime, 5);
+    CHECK_EQ(*itAsc, 5);
+    CHECK_EQ(*itCross, 5);
 }

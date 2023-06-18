@@ -1,48 +1,72 @@
 #include <iostream>
-#include <csignal>
+#include <cassert>
 #include "sources/MagicalContainer.hpp"
 
 using namespace ariel;
+using namespace std;
 
 int main() {
-    // Create a MagicalContainer and add some elements
-    MagicalContainer emptyContainer;
-    MagicalContainer::AscendingIterator it(emptyContainer);
-    MagicalContainer container;
-    container.addElement(17);
-    container.addElement(2);
-    container.addElement(25);
-    container.addElement(9);
-    container.addElement(3);
-    printLinkedList(container.getElementsAsc());
-    // Print container size
-    std::cout << "Size of container: " << container.size() << std::endl;
+    try {
+        MagicalContainer container;
 
-    // Use AscendingIterator to display elements in ascending order
-    std::cout << "Elements in ascending order:\n";
-    MagicalContainer::AscendingIterator ascIter(container);
-    for (auto it = ascIter.begin(); it != ascIter.end(); ++it) {
-        std::cout << *it << ' ';   // 2 3 9 17 25
-    }
-    std::cout << std::endl;
+        // Test adding elements
+        container.addElement(10);
+        assert(container.size() == 1);
+        cout << "Adding a single element passed" << endl;
 
-    // Use DescendingIterator to display elements in descending order
-    std::cout << "Elements in cross order:\n";
-    MagicalContainer::SideCrossIterator crossIter(container);
-    for (auto it = crossIter.begin(); it != crossIter.end(); ++it) {
-        std::cout << *it << ' ';  // 2 25 3 17 9
+        container.addElement(20);
+        container.addElement(30);
+        assert(container.size() == 3);
+        cout << "Adding multiple elements passed" << endl;
+
+        // Test removing elements
+        container.removeElement(10);
+        assert(container.size() == 2);
+        cout << "Removing an existing element passed" << endl;
+
+        try {
+            container.removeElement(40);
+        } catch(const std::runtime_error& e) {
+            cout << "Removing a non-existing element threw an exception as expected" << endl;
+        }
+
+        // Test AscendingIterator
+        MagicalContainer::AscendingIterator itAsc(container);
+        assert(*itAsc == 20);
+        ++itAsc;
+        assert(*itAsc == 30);
+        ++itAsc;
+        assert(itAsc == itAsc.end());
+        cout << "AscendingIterator passed" << endl;
+
+        // Test SideCrossIterator
+        MagicalContainer::SideCrossIterator itSideCross(container);
+        assert(*itSideCross == 20);
+        ++itSideCross;
+        assert(*itSideCross == 30);
+        ++itSideCross;
+        assert(itSideCross == itSideCross.end());
+        cout << "SideCrossIterator passed" << endl;
+
+        // Test PrimeIterator
+        MagicalContainer primeContainer;
+        primeContainer.addElement(2);
+        primeContainer.addElement(3);
+        primeContainer.addElement(4);
+        MagicalContainer::PrimeIterator itPrime(primeContainer);
+        assert(*itPrime == 2);
+        ++itPrime;
+        assert(*itPrime == 3);
+        ++itPrime;
+        assert(itPrime == itPrime.end());
+        cout << "PrimeIterator passed" << endl;
+
+
+
+
+    } catch(const std::exception& e) {
+        cout << "An exception occurred: " << e.what() << endl;
     }
-    std::cout << std::endl;
-    // Use PrimeIterator to display prime numbers only
-    std::cout << "Prime numbers:\n";
-    MagicalContainer::PrimeIterator primeIter(container);
-    for (auto it = primeIter.begin(); it != primeIter.end(); ++it) {
-        std::cout << *it << ' ';  // 2 3 17
-    }
-    std::cout << std::endl;
-    // Remove an element from the container and display the size
-    container.removeElement(9);
-    std::cout << "Size of container after removing an element: " << container.size() << std::endl;
 
     return 0;
 }
